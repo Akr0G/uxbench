@@ -31,8 +31,6 @@ Scripts currently use the macOS/Linux project-local Node path. On Windows, use N
 | ------------------ | ----------------------------------------------------------------------------------------- |
 | `CRUX_API_KEY`     | Optional Google Chrome UX Report API key. Enables exact-URL mobile/desktop field queries. |
 | `UXBENCH_DATA_DIR` | Database and evidence directory; defaults to `./data`.                                    |
-| `UXBENCH_HOST` | Bind address for Next.js; defaults to `127.0.0.1` and is `0.0.0.0` in the container. |
-| `UXBENCH_ACCESS_USER` / `UXBENCH_ACCESS_PASSWORD` | Optional shared HTTP Basic Auth credentials for a trusted hosted beta. |
 
 The launcher loads `.env` and `.env.local` for both processes. Keys are never returned to the browser. No API key is needed for Lighthouse, Playwright, axe, comparisons, or exports.
 
@@ -114,24 +112,6 @@ Integration tests serve deliberately broken and healthy fixtures through an isol
 
 This release is intended for a **trusted local research workspace**, bound to 127.0.0.1. It has no multi-user authentication. Do not expose it directly to the public internet. A hosted deployment requires authentication and authorization on reports/assets, per-user quotas, storage retention, queue monitoring, an isolated browser container, and outbound firewall rules denying private/reserved networks independently of application checks. Use a long-running Node host, not a short-lived serverless function.
 
-### Hosted beta on Fly.io
-
-The repository includes a Fly.io configuration for one persistent Machine. It runs the Next.js application and the serial audit worker together, keeps SQLite reports and screenshots on a mounted volume, and includes Chromium in the Docker image. Keeping this to one Machine is intentional: the local SQLite database and worker lock are not shared across Machines.
-
-Install the [Fly CLI](https://fly.io/docs/flyctl/install/), sign in, then run:
-
-```sh
-fly launch --no-deploy
-fly volumes create uxbench_data --size 10 --region iad
-fly secrets set UXBENCH_ACCESS_PASSWORD="choose-a-long-unique-password"
-# Optional: enable CrUX field-data queries.
-fly secrets set CRUX_API_KEY="your-google-api-key"
-fly deploy
-```
-
-`fly launch` writes the Fly app name into `fly.toml`; choose the region closest to the people who will use it and use that same region when creating the volume. After deployment, give invited testers the HTTPS URL, username `uxbench` (or the value set as `UXBENCH_ACCESS_USER`), and the password out of band. The health endpoint is public only so Fly can determine whether the service is running; it reveals no report data.
-
-The password gate limits the beta to invited people, but it intentionally does **not** create separate workspaces. Every authorized tester can see the same audit list, URLs, reports, and screenshots. Before a public, multi-user launch, add real accounts and ownership checks to every job, asset, and review API; move report files to access-controlled object storage; replace the shared SQLite queue with a multi-user database/queue; and retain browser sandboxing plus network egress controls at the host level.
 
 The application rejects credentials, non-HTTP(S) URLs, and nonstandard ports. Its proxy validates DNS at connection time and connects to the validated IP, preventing DNS rebinding between validation and connection. Redirects, frames, and browser subresources go through the same proxy; loopback bypass is disabled and QUIC/non-proxied WebRTC are disabled. Browser exploitation requires OS/container isolation as defense in depth. Page scripts still execute as part of a real browser audit.
 
