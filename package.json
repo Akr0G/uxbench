@@ -1,0 +1,45 @@
+{
+  "name": "uxbench",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node_modules/node/bin/node scripts/start.mjs dev",
+    "build": "node_modules/node/bin/node node_modules/next/dist/bin/next build",
+    "start": "node_modules/node/bin/node scripts/start.mjs start",
+    "worker": "node_modules/node/bin/node --import tsx scripts/worker.ts",
+    "typecheck": "node_modules/node/bin/node node_modules/typescript/bin/tsc --noEmit",
+    "lint": "node_modules/node/bin/node node_modules/eslint/bin/eslint.js .",
+    "test": "node_modules/node/bin/node --import tsx --test tests/*.test.ts",
+    "test:integration": "node_modules/node/bin/node --import tsx scripts/integration.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^22.20.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.3.4",
+    "node": "^22.23.2",
+    "prettier": "^3.9.6",
+    "tailwindcss": "^4.3.3",
+    "tsx": "^4.23.13",
+    "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "axe-core": "^4.13.0",
+    "ipaddr.js": "^2.5.0",
+    "lighthouse": "^13.4.1",
+    "lucide-react": "^1.44.0",
+    "next": "^16.3.4",
+    "playwright": "^1.63.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "zod": "^4.6.2"
+  }
+}
