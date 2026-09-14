@@ -31,8 +31,6 @@ Scripts currently use the macOS/Linux project-local Node path. On Windows, use N
 | ------------------ | ----------------------------------------------------------------------------------------- |
 | `CRUX_API_KEY`     | Optional Google Chrome UX Report API key. Enables exact-URL mobile/desktop field queries. |
 | `UXBENCH_DATA_DIR` | Database and evidence directory; defaults to `./data`.                                    |
-| `UXBENCH_HOST` | Bind address for Next.js; defaults to `127.0.0.1`. |
-| `UXBENCH_ACCESS_USER` / `UXBENCH_ACCESS_PASSWORD` | Optional shared HTTP Basic Auth credentials for a hosted demo. |
 
 The launcher loads `.env` and `.env.local` for both processes. Keys are never returned to the browser. No API key is needed for Lighthouse, Playwright, axe, comparisons, or exports.
 
@@ -117,11 +115,6 @@ This release is intended for a **trusted local research workspace**, bound to 12
 
 The application rejects credentials, non-HTTP(S) URLs, and nonstandard ports. Its proxy validates DNS at connection time and connects to the validated IP, preventing DNS rebinding between validation and connection. Redirects, frames, and browser subresources go through the same proxy; loopback bypass is disabled and QUIC/non-proxied WebRTC are disabled. Browser exploitation requires OS/container isolation as defense in depth. Page scripts still execute as part of a real browser audit.
 
-### Render demo deployment
-
-`render.yaml` and the Dockerfile provide a no-card, free Render demo deployment. It includes Chromium, runs the app and audit worker in one container, and prompts you to set an invite password during setup. In Render, choose **New → Blueprint**, connect the `Akr0G/uxbench` repository, and select the `main` branch. Render reads `render.yaml`; enter an invite password when prompted and click **Apply**.
-
-The free tier has only 512 MB RAM and can sleep after 15 minutes of inactivity. It uses temporary filesystem storage, so queued jobs and completed reports disappear when Render restarts or sleeps. Treat it as a shareable demonstration, not a reliable public service. A paid service with persistent storage and per-user authorization is required for durable public use.
 
 ## References
 
