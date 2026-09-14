@@ -114,6 +114,17 @@ test("local mutation guard accepts loopback aliases but rejects real cross-origi
       }),
     ),
   );
+  assert.doesNotThrow(() =>
+    assertLocalMutation(
+      new Request("http://10.0.0.4:10000/api/jobs", {
+        headers: {
+          origin: "https://uxbench-demo.onrender.com",
+          "x-forwarded-host": "uxbench-demo.onrender.com",
+          "x-forwarded-proto": "https",
+        },
+      }),
+    ),
+  );
   assert.throws(() =>
     assertLocalMutation(
       new Request("http://127.0.0.1:3000/api/jobs", {

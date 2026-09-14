@@ -143,12 +143,29 @@ export function assertLocalMutation(request: Request) {
   } catch {
     throw new Error("Cross-origin requests are not allowed.");
   }
-  const requestUrl = new URL(request.url);
+  const requestUrl = publicRequestUrl(request);
   if (
     originUrl.origin !== requestUrl.origin &&
     !sameLoopbackOrigin(originUrl, requestUrl)
   )
     throw new Error("Cross-origin requests are not allowed.");
+}
+
+// Render and similar reverse proxies terminate HTTPS before forwarding the
+// request to Next.js over HTTP. Preserve the browser-visible origin for CSRF
+// checks instead of comparing against that internal hop.
+function publicRequestUrl(request: Request) {
+  const internal = new URL(request.url);
+  const forwardedHost = request.headers.get("x-forwarded-host")?.split(",")[0];
+  const forwardedProto = request.headers
+    .get("x-forwarded-proto")
+    ?.split(",")[0];
+  if (!forwardedHost || !forwardedProto) return internal;
+  try {
+    return new URL(`${forwardedProto.trim()}://${forwardedHost.trim()}`);
+  } catch {
+    return internal;
+  }
 }
 
 function sameLoopbackOrigin(a: URL, b: URL) {
